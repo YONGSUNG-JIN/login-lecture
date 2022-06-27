@@ -1,5 +1,7 @@
 "use strict";
 
+const UserStorage = require("../../models/UserStorage");
+
 const output = {
     home: (req, res) => {
         res.render("home/index");
@@ -9,30 +11,25 @@ const output = {
     }
 }
 
-const users = {
-    id: ["jinys90", "jinyh95", "ys.jin@fastfive.co.kr"],
-    psword: ["1234", "5678", "123456"],
-};
 
 const process = {
     login: (req, res) => {
         const id = req.body.id,
             psword = req.body.psword;
-
-        console.log(id, psword);
+        const users = UserStorage.getUsers("id","psword"); 
+        const response = {};
 
         if (users.id.includes(id)) {
             const idx = users.id.indexOf(id);
             if (users.psword[idx] === psword) {
-                return res.json({
-                    success: true,
-                });
+                response.success = true;
+                return res.json(response);
             }
         }
-        return res.json({
-            success: false,
-            msg: "로그인에 실패"
-        });
+        
+        response.success = false;
+        response.msg = "로그인 실패"
+        return res.json(response);
     }
 }
 
